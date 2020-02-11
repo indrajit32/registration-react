@@ -1,5 +1,5 @@
-import { userConstants } from '../_constants';
-import { userService } from '../_services';
+import { userConstants, productConstants } from '../_constants';
+import { userService, productService } from '../_services';
 import { alertActions } from './';
 import { history } from '../_helpers';
 
@@ -8,7 +8,8 @@ export const userActions = {
     logout,
     register,
     getAll,
-    delete: _delete
+    delete: _delete,
+    getAllProducts
 };
 
 function login(username, password) {
@@ -45,7 +46,7 @@ function register(user) {
         userService.register(user)
             .then(
                 user => { 
-                    dispatch(success());
+                    dispatch(success(user));
                     history.push('/login');
                     dispatch(alertActions.success('Registration successful'));
                 },
@@ -67,7 +68,7 @@ function getAll() {
 
         userService.getAll()
             .then(
-                users => dispatch(success(users)),
+                users => { return dispatch(success(users)); },
                 error => dispatch(failure(error))
             );
     };
@@ -96,4 +97,20 @@ function _delete(id) {
     function request(id) { return { type: userConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: userConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: userConstants.DELETE_FAILURE, id, error } }
+}
+
+function getAllProducts() {
+    return dispatch => {
+        //dispatch(request());
+
+        productService.getAllProducts()
+            .then(
+                products => { return dispatch(success(products)); },
+                //error => dispatch(failure(error))
+            );
+    };
+
+    function request() { return { type: userConstants.GETALL_REQUEST } }
+    function success(products) { return { type: productConstants.GETALL_REQUEST, products } }
+    //function failure(error) { return { type: userConstants.GETALL_FAILURE, error } }
 }
